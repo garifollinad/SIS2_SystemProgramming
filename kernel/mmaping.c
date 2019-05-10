@@ -79,6 +79,14 @@ vma_close_paging(struct vm_area_struct * vma)
     printk(KERN_INFO "vma_close_paging() invoked\n");
 }
 
+static struct vm_operations_struct/*the operations table is represented by struct vm_operations_struct */
+
+vma_ops_paging = 
+{
+    .fault = vma_fault_paging,
+    .open  = vma_open_paging,
+    .close = vma_close_paging
+};
 //mapping the new virtual address for the process 
 static int
 mmaping(struct file * file, struct vm_area_struct * vma)
@@ -98,14 +106,6 @@ mmaping(struct file * file, struct vm_area_struct * vma)
 
     return 0;
 }
-
-static struct vm_operations_struct/*the operations table is represented by struct vm_operations_struct */
-vma_ops_paging = 
-{
-    .fault = vma_fault_paging,
-    .open  = vma_open_paging,
-    .close = vma_close_paging
-};
 
 static struct file_operations/*Структура file_operations определена в файле linux/fs.h и содержит указатели на функции драйвера, 
 которые отвечают за выполнение различных операций с устройством*/
