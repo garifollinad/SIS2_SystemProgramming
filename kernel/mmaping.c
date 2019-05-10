@@ -79,6 +79,26 @@ vma_close_paging(struct vm_area_struct * vma)
     printk(KERN_INFO "vma_close_paging() invoked\n");
 }
 
+//mapping the new virtual address for the process 
+static int
+mmaping(struct file * file, struct vm_area_struct * vma)
+{
+    vma->vm_flags |= VM_IO | VM_DONTCOPY | VM_DONTEXPAND | VM_NORESERVE
+              | VM_DONTDUMP | VM_PFNMAP;// contains bit flags, defined in <linux/mm.h>, that specify the behavior of and provide information about the pages contained in the memory area.
+
+    // setup the vma->vm_ops, so we can catch page faults 
+    //points to the table of operations associated with a given memory area, which the kernel can invoke to manipulate the VMA
+    vma->vm_ops = &vma_ops_paging; /*structure points to the table of operations associated with a given memory area,
+     which the kernel can invoke to manipulate the VMA.*/
+    printk("mmaping, vma: %lu", vma);
+
+    printk(KERN_INFO "mmaping() invoked: new VMA for pid %d from VA 0x%lx to 0x%lx\n",
+        current->pid, vma->vm_start, vma->vm_end);/*The vm_start field is the initial (lowest) address in the interval and 
+    the vm_end field is the first byte after the final (highest) address in the interval.*/
+
+    return 0;
+}
+
 static struct vm_operations_struct/*the operations table is represented by struct vm_operations_struct */
 vma_ops_paging = 
 {
